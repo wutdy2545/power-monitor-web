@@ -4,27 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transformer Monitoring Unit | Pongpichan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0b0f1a; --card: #161b2c; --cyan: #00f2ff; --green: #00ff88; --red: #ff4d4d; --amber: #ffcc00; --indigo: #6366f1; }
-        body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: #e2e8f0; margin: 0; padding: 10px; }
-        .container { max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        .header { text-align: center; padding: 25px 0; }
-        .header h1 { margin: 0; font-size: 26px; color: var(--cyan); line-height: 1.3; font-weight: 600; text-transform: uppercase; }
-        .developer-tag { font-size: 13px; color: #475569; margin-top: 8px; font-weight: 300; }
-        .developer-tag span { color: #94a3b8; font-weight: 400; }
-        
-        .status-box { background: rgba(22, 27, 44, 0.8); padding: 12px; border-radius: 12px; text-align: center; border-left: 5px solid var(--green); margin-bottom: 20px; transition: 0.3s; }
-        .status-text { font-size: 22px; font-weight: 600; color: var(--green); }
+        :root { 
+            --bg: #0b0f1a; 
+            --card-bg: linear-gradient(145deg, #1a2133, #111625);
+            --cyan: #00f2ff; 
+            --green: #00ff88; 
+            --red: #ff4d4d; 
+            --amber: #ffcc00; 
+            --indigo: #6366f1; 
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --text-bright: rgba(255, 255, 255, 0.7);
+        }
 
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        body { 
+            font-family: 'Kanit', sans-serif; 
+            background-color: var(--bg); 
+            /* เพิ่มแสงพื้นหลังให้ดูมีมิติ */
+            background-image: radial-gradient(circle at 50% 0%, #1a2642 0%, #0b0f1a 70%);
+            color: #e2e8f0; 
+            margin: 0; 
+            padding: 10px; 
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; }
+        
+        .header { text-align: center; padding: 30px 0; position: relative; }
+        .header h1 { 
+            margin: 0; 
+            font-size: 28px; 
+            color: var(--cyan); 
+            line-height: 1.3; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.4); /* เพิ่มเงาเรืองแสงให้หัวข้อ */
+        }
+        .developer-tag { font-size: 14px; color: #64748b; margin-top: 8px; font-weight: 300; }
+        .developer-tag span { font-weight: 500; }
+        
+        /* ปรับ Status Box */
+        .status-box { 
+            background: rgba(22, 27, 44, 0.6); 
+            backdrop-filter: blur(10px);
+            padding: 15px; 
+            border-radius: 16px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1);
+            border-left: 5px solid var(--green); 
+            margin-bottom: 25px; 
+            transition: 0.3s; 
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+        }
+        .status-text { font-size: 24px; font-weight: 600; color: var(--green); text-shadow: 0 0 10px rgba(0,255,136,0.3); }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
         @media (min-width: 768px) { 
             .dashboard-grid { 
                 grid-template-columns: repeat(4, 1fr); 
-                gap: 15px; 
+                gap: 20px; 
             }
+            /* จัดเรียงลำดับการ์ดตามเดิม */
             .dashboard-grid .card:nth-child(2) { grid-row: 1; grid-column: 1; } 
             .dashboard-grid .card:nth-child(4) { grid-row: 1; grid-column: 2; } 
             .dashboard-grid .card:nth-child(6) { grid-row: 1; grid-column: 3; } 
@@ -45,48 +87,132 @@
             .dashboard-grid .card:nth-child(6),
             .dashboard-grid .card:nth-child(8) {
                 border-top: 3px solid var(--cyan);
-                background: rgba(0, 242, 255, 0.03); 
+                background: linear-gradient(160deg, rgba(0, 242, 255, 0.08), #111625);
             }
 
             .dashboard-grid .card:nth-child(1),
             .dashboard-grid .card:nth-child(3),
             .dashboard-grid .card:nth-child(5),
             .dashboard-grid .card:nth-child(7) {
-                border-top: 3px solid #94a3b8;
+                border-top: 3px solid #64748b;
             }
         } 
 
-        .card { background: var(--card); padding: 18px; border-radius: 16px; text-align: center; border: 1px solid #2d3748; }
-        .card h3 { margin: 0; font-size: 14px; color: #ffffff; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
-        .card .value { font-size: 28px; font-weight: 600; margin: 8px 0; color: #ffffff; }
-        .card .unit { font-size: 20px; color: #718096; margin-left: 4px; }
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px 15px; 
+            border-radius: 16px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-        .txt-cyan { color: var(--cyan) !important; }
-        .txt-amber { color: var(--amber) !important; }
+        /* Hover Effect สวยๆ */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .card h3 { 
+            margin: 0; 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            font-weight: 500; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            margin-bottom: 5px;
+        }
+
+        .card .value { 
+            font-size: 30px; 
+            font-weight: 600; 
+            margin: 5px 0; 
+            color: #ffffff; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* ปรับสีหน่วยให้สว่างขึ้นตามคำขอ */
+        .card .unit { 
+            font-size: 18px; 
+            color: var(--text-bright); /* เปลี่ยนเป็นสีสว่าง */
+            margin-left: 4px; 
+            font-weight: 400;
+        }
+
+        .txt-cyan { color: var(--cyan) !important; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .txt-amber { color: var(--amber) !important; text-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
         .txt-red { color: var(--red) !important; }
 
-        .battery-container { position: relative; width: 65px; height: 32px; border: 2px solid #4a5568; border-radius: 6px; margin: 10px auto; padding: 2px; }
-        .battery-container::after { content: ''; position: absolute; right: -7px; top: 9px; width: 4px; height: 10px; background: #4a5568; border-radius: 0 2px 2px 0; }
-        .battery-level { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 600; }
+        /* Battery Styling Updated */
+        .battery-container { 
+            position: relative; 
+            width: 70px; 
+            height: 34px; 
+            border: 2px solid #64748b; 
+            border-radius: 8px; 
+            margin: 12px auto 0; 
+            padding: 3px; 
+            background: rgba(0,0,0,0.2);
+        }
+        .battery-container::after { content: ''; position: absolute; right: -7px; top: 10px; width: 4px; height: 10px; background: #64748b; border-radius: 0 3px 3px 0; }
+        .battery-level { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.5s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #000; font-weight: 700; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
 
-        .gauge-box { position: relative; width: 100px; height: 100px; margin: 10px auto 0; }
+        .gauge-box { position: relative; width: 100px; height: 100px; margin: 5px auto 0; }
         .gauge-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
-        .gauge-bg { fill: none; stroke: #1a202c; stroke-width: 10; }
-        .gauge-progress { fill: none; stroke: var(--green); stroke-width: 10; stroke-dasharray: 251.2; stroke-dashoffset: 251.2; transition: stroke-dashoffset 0.6s; stroke-linecap: round; }
-        .gauge-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: 600; }
+        .gauge-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+        .gauge-progress { fill: none; stroke: var(--green); stroke-width: 8; stroke-dasharray: 251.2; stroke-dashoffset: 251.2; transition: stroke-dashoffset 0.6s; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--green)); }
+        .gauge-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: 600; color: #fff; }
 
-        .control-panel { background: #1a1e2e; padding: 25px; border-radius: 20px; margin-top: 30px; border: 1px solid #2d3748; }
-        .control-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 768px) { .control-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 20px; } }
+        .control-panel { 
+            background: #141a29; 
+            padding: 30px; 
+            border-radius: 24px; 
+            margin-top: 40px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
+        }
+        .control-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .control-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 25px; } }
 
-        .input-card { background: #0b0f1a; border: 1px solid #334155; padding: 15px; border-radius: 12px; }
-        input[type="number"] { background: transparent; border: none; color: white; width: 100%; font-size: 26px; font-family: 'Kanit'; text-align: center; outline: none; }
+        .input-card { 
+            background: #0f1320; 
+            border: 1px solid #334155; 
+            padding: 20px; 
+            border-radius: 16px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        input[type="number"] { 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid transparent; 
+            border-radius: 8px;
+            color: white; 
+            width: 100%; 
+            font-size: 28px; 
+            font-family: 'Kanit'; 
+            text-align: center; 
+            outline: none; 
+            padding: 5px 0;
+            margin: 10px 0;
+            transition: 0.3s;
+        }
+        input[type="number"]:focus {
+            border-color: var(--indigo);
+            background: rgba(99, 102, 241, 0.1);
+        }
         
-        .btn { border: none; padding: 15px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: 0.3s; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-        .btn-update { background: var(--indigo); color: white; width: 100%; margin-top: 10px; }
-        .btn-sheet { background: rgba(0, 255, 136, 0.1); color: var(--green); border: 1px solid var(--green); }
-        .btn-reset { background: rgba(255, 77, 77, 0.1); color: var(--red); border: 1px solid var(--red); }
-        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn { border: none; padding: 16px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px; letter-spacing: 0.5px; }
+        .btn-update { background: linear-gradient(90deg, #6366f1, #4f46e5); color: white; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+        .btn-sheet { background: rgba(0, 255, 136, 0.05); color: var(--green); border: 1px solid rgba(0, 255, 136, 0.3); }
+        .btn-reset { background: rgba(255, 77, 77, 0.05); color: var(--red); border: 1px solid rgba(255, 77, 77, 0.3); }
+        
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        .btn:active { transform: translateY(0); }
     </style>
 </head>
 <body>
@@ -111,7 +237,7 @@
         <div class="card"><h3>Phase C (IC)</h3><div class="value"><span id="val-ic">0.00</span><span class="unit">A</span></div></div>
         <div class="card"><h3>Power C (S3)</h3><div class="value"><span id="val-sc">0.00</span><span class="unit">kVA</span></div></div>
 
-        <div class="card"><h3>Neutral (IN)</h3><div class="value" style="color:#94a3b8"><span id="val-in">0.00</span><span class="unit">A</span></div></div>
+        <div class="card"><h3>Neutral (IN)</h3><div class="value"><span id="val-in">0.00</span><span class="unit">A</span></div></div>
         <div class="card"><h3>Total Power</h3><div class="value txt-cyan"><span id="val-stotal">0.00</span><span class="unit">kVA</span></div></div>
 
         <div class="card"><h3>Ground (IG)</h3><div class="value txt-amber"><span id="val-ig">0.00</span><span class="unit">mA</span></div></div>
@@ -133,7 +259,7 @@
     <div class="control-panel">
         <div class="control-grid">
             <div class="input-card">
-                <span style="font-size: 13px; color: var(--indigo); font-weight: 600;">CONFIG CAPACITY (kVA)</span>
+                <span style="font-size: 13px; color: var(--indigo); font-weight: 600; letter-spacing: 1px;">CONFIG CAPACITY (kVA)</span>
                 <input type="number" id="input-kva" value="160">
                 <button class="btn btn-update" onclick="updateKVA()">💾 UPDATE SETTINGS</button>
             </div>
@@ -170,7 +296,6 @@
         }
     });
 
-    // ใช้ระบบ Polling (ถามทุก 1.5 วินาที) แทนการเปิดท่อตลอดเวลา เพื่อแก้ปัญหาเว็บค้าง
     function fetchData() {
         if(!isConnected) return;
 
@@ -205,6 +330,8 @@
         const batBar = document.getElementById('bat-level');
         document.getElementById('val-batpct').innerText = batPct;
         batBar.style.width = batPct + "%";
+        // ปรับสี Text ในแบตให้เป็นสีดำเพื่อให้ตัดกับพื้นหลังสีเขียว/แดง
+        batBar.style.color = "#1a202c"; 
         batBar.style.background = (batPct < 25) ? "#ff4d4d" : (batPct < 60) ? "#ffcc00" : "#00ff88";
 
         const rate = d.load_percent || 0;
@@ -228,7 +355,7 @@
         document.getElementById('status-card').style.borderLeftColor = (statusText === "Normal") ? "#00ff88" : "#ff4d4d";
     }
 
-    setInterval(fetchData, 1500); // ดึงข้อมูลทุก 1.5 วินาที
+    setInterval(fetchData, 1000); 
     fetchData();
 
     function updateKVA() {
