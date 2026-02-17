@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Monitoring Unit | Pongpichan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0b0f1a; --card: #161b2c; --cyan: #00f2ff; --green: #00ff88; --red: #ff4d4d; --amber: #ffcc00; --indigo: #6366f1; }
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg); color: #e2e8f0; margin: 0; padding: 10px; }
+        .container { max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .header { text-align: center; padding: 25px 0; }
+        .header h1 { margin: 0; font-size: 26px; color: var(--cyan); line-height: 1.3; font-weight: 600; text-transform: uppercase; }
+        .developer-tag { font-size: 13px; color: #475569; margin-top: 8px; font-weight: 300; }
+        .developer-tag span { color: #94a3b8; font-weight: 400; }
+        
+        .status-box { background: rgba(22, 27, 44, 0.8); padding: 12px; border-radius: 12px; text-align: center; border-left: 5px solid var(--green); margin-bottom: 20px; transition: 0.3s; }
+        .status-text { font-size: 22px; font-weight: 600; color: var(--green); }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        @media (min-width: 768px) { 
+            .dashboard-grid { 
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 15px; 
+            }
+            .dashboard-grid .card:nth-child(2) { grid-row: 1; grid-column: 1; } 
+            .dashboard-grid .card:nth-child(4) { grid-row: 1; grid-column: 2; } 
+            .dashboard-grid .card:nth-child(6) { grid-row: 1; grid-column: 3; } 
+            .dashboard-grid .card:nth-child(8) { grid-row: 1; grid-column: 4; } 
+
+            .dashboard-grid .card:nth-child(1) { grid-row: 2; grid-column: 1; } 
+            .dashboard-grid .card:nth-child(3) { grid-row: 2; grid-column: 2; } 
+            .dashboard-grid .card:nth-child(5) { grid-row: 2; grid-column: 3; } 
+            .dashboard-grid .card:nth-child(7) { grid-row: 2; grid-column: 4; } 
+
+            .dashboard-grid .card:nth-child(9)  { grid-row: 3; grid-column: 1; } 
+            .dashboard-grid .card:nth-child(10) { grid-row: 3; grid-column: 2; } 
+            .dashboard-grid .card:nth-child(11) { grid-row: 3; grid-column: 3; } 
+            .dashboard-grid .card:nth-child(12) { grid-row: 3; grid-column: 4; } 
+
+            .dashboard-grid .card:nth-child(2),
+            .dashboard-grid .card:nth-child(4),
+            .dashboard-grid .card:nth-child(6),
+            .dashboard-grid .card:nth-child(8) {
+                border-top: 3px solid var(--cyan);
+                background: rgba(0, 242, 255, 0.03); 
+            }
+
+            .dashboard-grid .card:nth-child(1),
+            .dashboard-grid .card:nth-child(3),
+            .dashboard-grid .card:nth-child(5),
+            .dashboard-grid .card:nth-child(7) {
+                border-top: 3px solid #94a3b8;
+            }
+        } 
+
+        .card { background: var(--card); padding: 18px; border-radius: 16px; text-align: center; border: 1px solid #2d3748; }
+        .card h3 { margin: 0; font-size: 14px; color: #ffffff; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
+        .card .value { font-size: 28px; font-weight: 600; margin: 8px 0; color: #ffffff; }
+        .card .unit { font-size: 20px; color: #718096; margin-left: 4px; }
+
+        .txt-cyan { color: var(--cyan) !important; }
+        .txt-amber { color: var(--amber) !important; }
+        .txt-red { color: var(--red) !important; }
+
+        .battery-container { position: relative; width: 65px; height: 32px; border: 2px solid #4a5568; border-radius: 6px; margin: 10px auto; padding: 2px; }
+        .battery-container::after { content: ''; position: absolute; right: -7px; top: 9px; width: 4px; height: 10px; background: #4a5568; border-radius: 0 2px 2px 0; }
+        .battery-level { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 600; }
+
+        .gauge-box { position: relative; width: 100px; height: 100px; margin: 10px auto 0; }
+        .gauge-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+        .gauge-bg { fill: none; stroke: #1a202c; stroke-width: 10; }
+        .gauge-progress { fill: none; stroke: var(--green); stroke-width: 10; stroke-dasharray: 251.2; stroke-dashoffset: 251.2; transition: stroke-dashoffset 0.6s; stroke-linecap: round; }
+        .gauge-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: 600; }
+
+        .control-panel { background: #1a1e2e; padding: 25px; border-radius: 20px; margin-top: 30px; border: 1px solid #2d3748; }
+        .control-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .control-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 20px; } }
+
+        .input-card { background: #0b0f1a; border: 1px solid #334155; padding: 15px; border-radius: 12px; }
+        input[type="number"] { background: transparent; border: none; color: white; width: 100%; font-size: 26px; font-family: 'Kanit'; text-align: center; outline: none; }
+        
+        .btn { border: none; padding: 15px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: 0.3s; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        .btn-update { background: var(--indigo); color: white; width: 100%; margin-top: 10px; }
+        .btn-sheet { background: rgba(0, 255, 136, 0.1); color: var(--green); border: 1px solid var(--green); }
+        .btn-reset { background: rgba(255, 77, 77, 0.1); color: var(--red); border: 1px solid var(--red); }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Transformer Current Monitoring</h1>
+        <div class="developer-tag">Dev: Pongpichan Suanon | <span id="val-sync">Connecting...</span></div>
+    </div>
+
+    <div class="status-box" id="status-card">
+        <div id="val-status" class="status-text">Normal</div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card"><h3>Phase A (IA)</h3><div class="value"><span id="val-ia">0.00</span><span class="unit">A</span></div></div>
+        <div class="card"><h3>Power A (S1)</h3><div class="value"><span id="val-sa">0.00</span><span class="unit">kVA</span></div></div>
+
+        <div class="card"><h3>Phase B (IB)</h3><div class="value"><span id="val-ib">0.00</span><span class="unit">A</span></div></div>
+        <div class="card"><h3>Power B (S2)</h3><div class="value"><span id="val-sb">0.00</span><span class="unit">kVA</span></div></div>
+
+        <div class="card"><h3>Phase C (IC)</h3><div class="value"><span id="val-ic">0.00</span><span class="unit">A</span></div></div>
+        <div class="card"><h3>Power C (S3)</h3><div class="value"><span id="val-sc">0.00</span><span class="unit">kVA</span></div></div>
+
+        <div class="card"><h3>Neutral (IN)</h3><div class="value" style="color:#94a3b8"><span id="val-in">0.00</span><span class="unit">A</span></div></div>
+        <div class="card"><h3>Total Power</h3><div class="value txt-cyan"><span id="val-stotal">0.00</span><span class="unit">kVA</span></div></div>
+
+        <div class="card"><h3>Ground (IG)</h3><div class="value txt-amber"><span id="val-ig">0.00</span><span class="unit">mA</span></div></div>
+        <div class="card"><h3>Unbalance</h3><div class="value txt-amber"><span id="val-unbalance">0.00</span><span class="unit">%</span></div></div>
+        
+        <div class="card">
+            <h3>Battery Voltage</h3>
+            <div class="battery-container"><div id="bat-level" class="battery-level" style="width: 0%"><span id="val-batpct">0</span></div></div>
+        </div>
+        <div class="card">
+            <h3>% Rated Trans. Charge</h3>
+            <div class="gauge-box">
+                <svg class="gauge-svg"><circle class="gauge-bg" cx="50" cy="50" r="40"/><circle id="gauge-bar" class="gauge-progress" cx="50" cy="50" r="40"/></svg>
+                <div id="gauge-val" class="gauge-text">0.0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-grid">
+            <div class="input-card">
+                <span style="font-size: 13px; color: var(--indigo); font-weight: 600;">CONFIG CAPACITY (kVA)</span>
+                <input type="number" id="input-kva" value="160">
+                <button class="btn btn-update" onclick="updateKVA()">💾 UPDATE SETTINGS</button>
+            </div>
+            
+            <a href="https://docs.google.com/spreadsheets/d/1KEUi444pPbUSfWsCzLsYjEo7Gh3rs2XdaEw221qzCmw/" target="_blank" class="btn btn-sheet">
+                📂 VIEW DATA LOG HISTORY
+            </a>
+            
+            <button class="btn btn-reset" onclick="resetDevice()">
+                🚨 HARD RESET DEVICE
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+    var firebaseConfig = { databaseURL: "https://powermonitor-r13-by-pongpichan-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
+
+    var isConnected = false;
+    var connectedRef = db.ref(".info/connected");
+    connectedRef.on("value", function(snap) {
+        if (snap.val() === true) {
+            isConnected = true;
+            document.getElementById('val-sync').innerText = "Connected";
+            document.getElementById('val-sync').style.color = "#00ff88";
+        } else {
+            isConnected = false;
+            document.getElementById('val-sync').innerText = "Disconnected";
+            document.getElementById('val-sync').style.color = "#ff4d4d";
+        }
+    });
+
+    // ใช้ระบบ Polling (ถามทุก 1.5 วินาที) แทนการเปิดท่อตลอดเวลา เพื่อแก้ปัญหาเว็บค้าง
+    function fetchData() {
+        if(!isConnected) return;
+
+        db.ref('monitor').once('value').then((snap) => {
+            const d = snap.val(); 
+            if(!d) return;
+            updateUI(d);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    }
+
+    function updateUI(d) {
+        document.getElementById('val-sync').innerText = "Last: " + (d.timestamp || "-");
+        
+        document.getElementById('val-ia').innerText = (d.ia || 0).toFixed(2);
+        document.getElementById('val-ib').innerText = (d.ib || 0).toFixed(2);
+        document.getElementById('val-ic').innerText = (d.ic || 0).toFixed(2);
+        document.getElementById('val-in').innerText = (d.in || 0).toFixed(2);
+        document.getElementById('val-ig').innerText = (d.ig || 0).toFixed(2);
+        document.getElementById('val-sa').innerText = (d.sa || 0).toFixed(2);
+        document.getElementById('val-sb').innerText = (d.sb || 0).toFixed(2);
+        document.getElementById('val-sc').innerText = (d.sc || 0).toFixed(2);
+        document.getElementById('val-stotal').innerText = (d.stotal || 0).toFixed(2);
+        document.getElementById('val-unbalance').innerText = (d.unbalance || 0).toFixed(2);
+
+        if (document.activeElement.id !== "input-kva") {
+             document.getElementById('input-kva').value = (d.kva || 160);
+        }
+        
+        const batPct = Math.round(d.bat_percent || 0);
+        const batBar = document.getElementById('bat-level');
+        document.getElementById('val-batpct').innerText = batPct;
+        batBar.style.width = batPct + "%";
+        batBar.style.background = (batPct < 25) ? "#ff4d4d" : (batPct < 60) ? "#ffcc00" : "#00ff88";
+
+        const rate = d.load_percent || 0;
+        const circle = document.getElementById('gauge-bar');
+        const gaugeVal = document.getElementById('gauge-val');
+        const displayRate = Math.min(Math.max(rate, 0), 100); 
+        const offset = 251.2 - (251.2 * displayRate / 100);
+        
+        circle.style.strokeDashoffset = offset;
+        gaugeVal.innerText = rate.toFixed(1) + "%";
+        
+        let color = "#00ff88"; 
+        if (rate > 75 && rate <= 90) color = "#ffcc00";
+        else if (rate > 90) color = "#ff4d4d";
+        circle.style.stroke = color; gaugeVal.style.color = color;
+
+        const statusText = d.status || "Normal";
+        const stTextEl = document.getElementById('val-status');
+        stTextEl.innerText = statusText;
+        stTextEl.style.color = (statusText === "Normal") ? "#00ff88" : "#ff4d4d";
+        document.getElementById('status-card').style.borderLeftColor = (statusText === "Normal") ? "#00ff88" : "#ff4d4d";
+    }
+
+    setInterval(fetchData, 1500); // ดึงข้อมูลทุก 1.5 วินาที
+    fetchData();
+
+    function updateKVA() {
+        const val = parseFloat(document.getElementById('input-kva').value);
+        if(confirm("Confirm update to " + val + " kVA?")) { db.ref('settings').update({ kva: val }); }
+    }
+
+    function resetDevice() {
+        if(confirm("🚨 Execute Hardware Reset?")) { db.ref('settings').update({ reset: 1 }); }
+    }
+</script>
+</body>
+</html>
