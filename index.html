@@ -18,6 +18,10 @@
             --text-bright: rgba(255, 255, 255, 0.85);
         }
 
+        * {
+            box-sizing: border-box; /* สำคัญมาก: ช่วยแก้ปัญหากล่องทับกัน */
+        }
+
         body { 
             font-family: 'Kanit', sans-serif; 
             background-color: var(--bg); 
@@ -62,6 +66,7 @@
                 grid-template-columns: repeat(4, 1fr); 
                 gap: 20px; 
             }
+            /* จัดเรียงลำดับการแสดงผล */
             .dashboard-grid .card:nth-child(2) { grid-row: 1; grid-column: 1; } 
             .dashboard-grid .card:nth-child(4) { grid-row: 1; grid-column: 2; } 
             .dashboard-grid .card:nth-child(6) { grid-row: 1; grid-column: 3; } 
@@ -77,6 +82,7 @@
             .dashboard-grid .card:nth-child(11) { grid-row: 3; grid-column: 3; } 
             .dashboard-grid .card:nth-child(12) { grid-row: 3; grid-column: 4; } 
 
+            /* แต่งสีหัวการ์ด */
             .dashboard-grid .card:nth-child(2),
             .dashboard-grid .card:nth-child(4),
             .dashboard-grid .card:nth-child(6),
@@ -101,6 +107,10 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -110,6 +120,7 @@
         .card h3 { 
             margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 500; 
             text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px;
+            width: 100%;
         }
         .card .value { 
             font-size: 30px; font-weight: 600; margin: 5px 0; color: #ffffff; 
@@ -125,7 +136,7 @@
         /* --- Apple Watch Ring Style --- */
         .ring-container {
             position: relative;
-            width: 120px; /* ขนาดวงกลม */
+            width: 120px;
             height: 120px;
             margin: 10px auto 0;
             display: flex;
@@ -136,7 +147,7 @@
             transform: rotate(-90deg);
             width: 100%;
             height: 100%;
-            overflow: visible; /* เพื่อให้เงาไม่ถูกตัด */
+            overflow: visible;
         }
         .ring-bg {
             fill: none;
@@ -150,7 +161,7 @@
             stroke-dasharray: 314; /* 2 * pi * 50 */
             stroke-dashoffset: 314;
             transition: stroke-dashoffset 0.8s ease-out, stroke 0.5s;
-            stroke-linecap: round; /* หัวมนเหมือน Apple Watch */
+            stroke-linecap: round;
             filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
         }
         .ring-data {
@@ -177,10 +188,20 @@
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
         }
         .control-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .control-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 25px; } }
+        
+        /* แก้ไข Grid ด้านล่างให้สมดุลกับด้านบน */
+        @media (min-width: 768px) { 
+            .control-grid { 
+                /* 2fr (กว้าง 2 ส่วน) 1fr (กว้าง 1 ส่วน) 1fr (กว้าง 1 ส่วน) = รวม 4 ส่วน พอดีกับด้านบน */
+                grid-template-columns: 2fr 1fr 1fr; 
+                gap: 25px; 
+                align-items: stretch; /* ให้ความสูงเท่ากัน */
+            } 
+        }
 
         .input-card { 
             background: #0f1320; border: 1px solid #334155; padding: 20px; border-radius: 16px; 
+            display: flex; flex-direction: column; justify-content: center;
         }
         input[type="number"] { 
             background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 8px;
@@ -189,10 +210,10 @@
         }
         input[type="number"]:focus { border-color: var(--indigo); background: rgba(99, 102, 241, 0.1); }
         
-        .btn { border: none; padding: 16px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px; width: 100%; }
-        .btn-update { background: linear-gradient(90deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
-        .btn-sheet { background: rgba(0, 255, 136, 0.05); color: var(--green); border: 1px solid rgba(0, 255, 136, 0.3); }
-        .btn-reset { background: rgba(255, 77, 77, 0.05); color: var(--red); border: 1px solid rgba(255, 77, 77, 0.3); }
+        .btn { border: none; padding: 16px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px; width: 100%; height: 100%; }
+        .btn-update { background: linear-gradient(90deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); margin-top: auto;}
+        .btn-sheet { background: rgba(0, 255, 136, 0.05); color: var(--green); border: 1px solid rgba(0, 255, 136, 0.3); text-align: center; flex-direction: column; gap: 10px;}
+        .btn-reset { background: rgba(255, 77, 77, 0.05); color: var(--red); border: 1px solid rgba(255, 77, 77, 0.3); flex-direction: column; gap: 10px;}
         .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
     </style>
 </head>
@@ -222,7 +243,20 @@
         <div class="card"><h3>Total Power</h3><div class="value txt-cyan"><span id="val-stotal">0.00</span><span class="unit">kVA</span></div></div>
 
         <div class="card"><h3>Ground (IG)</h3><div class="value txt-amber"><span id="val-ig">0.00</span><span class="unit">mA</span></div></div>
-        <div class="card"><h3>Unbalance</h3><div class="value txt-amber"><span id="val-unbalance">0.00</span><span class="unit">%</span></div></div>
+        
+        <div class="card">
+            <h3>Unbalance</h3>
+            <div class="ring-container">
+                <svg class="ring-svg">
+                    <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+                    <circle id="ring-unbal" class="ring-progress" cx="60" cy="60" r="50"></circle>
+                </svg>
+                <div class="ring-data">
+                    <span id="val-unbalance" class="ring-val">0.00</span>
+                    <span class="ring-unit">%</span>
+                </div>
+            </div>
+        </div>
         
         <div class="card">
             <h3>Battery Voltage</h3>
@@ -261,12 +295,12 @@
                 <button class="btn btn-update" onclick="updateKVA()">💾 UPDATE SETTINGS</button>
             </div>
             
-            <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-kU0fi9Xk4kzmloANQ_5TATfa4Fz0mr0LtuFMPhwpdPDCB055oDjlq1re01VyTQ4RLG1CdyjbjGuB/pubhtml?widget=true&amp%3Bheaders=false&fbclid=IwY2xjawQCGShleHRuA2FlbQIxMABicmlkETJtUjc1R080a1JvQW5FenRnc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHq_sRPSiMcmCPOXLTVQgmmgLmUBIpMN25l5SWTNSGxMUzzIJACZlpnlr5ohd_aem_1TdY6EAAwvVboMq2IXTmFw" target="_blank" class="btn btn-sheet">
-                📂 VIEW DATA LOG HISTORY
+            <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-kU0fi9Xk4kzmloANQ_5TATfa4Fz0mr0LtuFMPhwpdPDCB055oDjlq1re01VyTQ4RLG1CdyjbjGuB/pubhtml?widget=true&amp%3Bheaders=false&fbclid=IwY2xjawQCX2dleHRuA2FlbQIxMABicmlkETJtUjc1R080a1JvQW5FenRnc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHnIT_vhoA5HL-MDoR6IsZ_6FywDCN9pp3dBKwFokB1CYvdzTQ_bC7usrQVHb_aem_AF3oRjAK26mo8X_P8VwrEQ" target="_blank" class="btn btn-sheet">
+                <span style="font-size: 24px;">📂</span> VIEW DATA<br>LOG HISTORY
             </a>
             
             <button class="btn btn-reset" onclick="resetDevice()">
-                🚨 HARD RESET DEVICE
+                <span style="font-size: 24px;">🚨</span> HARD RESET<br>DEVICE
             </button>
         </div>
     </div>
@@ -305,6 +339,7 @@
     // ฟังก์ชันอัปเดตวงกลม
     function setRing(elementId, percent, color) {
         const circle = document.getElementById(elementId);
+        if(!circle) return;
         const radius = 50;
         const circumference = 2 * Math.PI * radius; // ~314
         const p = Math.min(Math.max(percent, 0), 100);
@@ -326,7 +361,14 @@
         document.getElementById('val-sb').innerText = (d.sb || 0).toFixed(2);
         document.getElementById('val-sc').innerText = (d.sc || 0).toFixed(2);
         document.getElementById('val-stotal').innerText = (d.stotal || 0).toFixed(2);
-        document.getElementById('val-unbalance').innerText = (d.unbalance || 0).toFixed(2);
+        
+        // --- Update Unbalance Ring (New) ---
+        const unbal = d.unbalance || 0;
+        document.getElementById('val-unbalance').innerText = unbal.toFixed(2);
+        let unbalColor = "#00ff88"; // เขียว (ปกติ)
+        if (unbal > 25) unbalColor = "#ff4d4d"; // แดง (อันตราย)
+        else if (unbal > 10) unbalColor = "#ffcc00"; // เหลือง (เตือน)
+        setRing('ring-unbal', unbal, unbalColor);
 
         if (document.activeElement.id !== "input-kva") {
              document.getElementById('input-kva').value = (d.kva || 160);
@@ -355,7 +397,7 @@
         document.getElementById('status-card').style.borderLeftColor = (statusText === "Normal") ? "#00ff88" : "#ff4d4d";
     }
 
-    setInterval(fetchData, 1000); // อัปเดตทุก 1 วินาที
+    setInterval(fetchData, 1000); 
     fetchData();
 
     function updateKVA() {
