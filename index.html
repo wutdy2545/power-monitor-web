@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformer Monitoring Unit | Pongpichan</title>
+    <title>Transformer Load Current Monitoring | Pongpichan</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -45,6 +45,12 @@
             text-shadow: 0 0 15px rgba(0, 242, 255, 0.4); 
         }
         .developer-tag { font-size: 14px; color: #64748b; margin-top: 8px; font-weight: 300; }
+        
+        /* เพิ่ม CSS สำหรับปรับขนาดเวลาให้ใหญ่ขึ้น */
+        #val-sync {
+            font-size: 18px; /* ปรับขนาดความใหญ่ของเวลาตรงนี้ */
+            font-weight: 400;
+        }
         
         .status-box { 
             background: rgba(22, 27, 44, 0.6); 
@@ -221,7 +227,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>Transformer Current Monitoring</h1>
+        <h1>Transformer Load Current Monitoring</h1>
         <div class="developer-tag">Dev: Pongpichan Suanon | <span id="val-sync">Connecting...</span></div>
     </div>
 
