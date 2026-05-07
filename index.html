@@ -355,7 +355,7 @@
             if(s.latitude && s.longitude) {
                 const mapBtn = document.getElementById('btn-map');
                 mapBtn.style.display = "inline-block";
-                mapBtn.href = `https://www.google.com/maps?q=$${s.latitude},${s.longitude}`;
+                mapBtn.href = `https://www.google.com/maps?q=${s.latitude},${s.longitude}`;
             }
             if (document.activeElement.id !== "input-kva") document.getElementById('input-kva').value = s.kva || 160;
             if (document.activeElement.id !== "input-locname") document.getElementById('input-locname').value = s.location_name || "";
@@ -429,7 +429,7 @@
     setInterval(fetchData, 1000); 
     fetchData();
 
-    // ฟังก์ชันอัปเดตข้อมูลทั้งหมดลง Firebase
+    // ฟังก์ชันอัปเดตข้อมูลทั้งหมดลง Firebase และ Google Sheets
     function updateSettings() {
         const valKVA = parseFloat(document.getElementById('input-kva').value);
         const locName = document.getElementById('input-locname').value;
@@ -437,14 +437,33 @@
         const lng = document.getElementById('input-lng').value;
 
         if(confirm("ยืนยันการอัปเดตตั้งค่า kVA และสถานที่?")) { 
+            
+            // 1. ส่งข้อมูลไปอัปเดตที่ Firebase (เพื่อให้หน้าเว็บแสดงผลพิกัดและชื่อสถานที่)
             db.ref('settings').update({ 
                 kva: valKVA,
                 location_name: locName,
                 latitude: lat,
                 longitude: lng
-            }).then(() => {
-                alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
             }); 
+            
+            // 2. ส่งข้อมูลไปบันทึกเป็นประวัติใน Google Sheets
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxB1-kW3YDO1SiGTiSgK0p1VXkduvzWQOscYjtkf3MDryRU_3qnWpXuDRSpBdWX7bx1/exec"; 
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                body: JSON.stringify({
+                    kva: valKVA,
+                    location_name: locName,
+                    latitude: lat,
+                    longitude: lng
+                })
+            }).then(() => {
+                alert("บันทึกข้อมูลลง Firebase และ Google Sheets เรียบร้อย!");
+            }).catch((error) => {
+                console.error("Error:", error);
+                alert("เกิดข้อผิดพลาดในการส่งข้อมูลไป Google Sheets");
+            });
         }
     }
 
