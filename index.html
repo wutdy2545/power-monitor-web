@@ -19,7 +19,7 @@
         }
 
         * {
-            box-sizing: border-box; /* สำคัญมาก: ช่วยแก้ปัญหากล่องทับกัน */
+            box-sizing: border-box; 
         }
 
         body { 
@@ -46,9 +46,8 @@
         }
         .developer-tag { font-size: 14px; color: #64748b; margin-top: 8px; font-weight: 300; }
         
-        /* เพิ่ม CSS สำหรับปรับขนาดเวลาให้ใหญ่ขึ้น */
         #val-sync {
-            font-size: 18px; /* ปรับขนาดความใหญ่ของเวลาตรงนี้ */
+            font-size: 18px; 
             font-weight: 400;
         }
         
@@ -72,7 +71,6 @@
                 grid-template-columns: repeat(4, 1fr); 
                 gap: 20px; 
             }
-            /* จัดเรียงลำดับการแสดงผล */
             .dashboard-grid .card:nth-child(2) { grid-row: 1; grid-column: 1; } 
             .dashboard-grid .card:nth-child(4) { grid-row: 1; grid-column: 2; } 
             .dashboard-grid .card:nth-child(6) { grid-row: 1; grid-column: 3; } 
@@ -88,7 +86,6 @@
             .dashboard-grid .card:nth-child(11) { grid-row: 3; grid-column: 3; } 
             .dashboard-grid .card:nth-child(12) { grid-row: 3; grid-column: 4; } 
 
-            /* แต่งสีหัวการ์ด */
             .dashboard-grid .card:nth-child(2),
             .dashboard-grid .card:nth-child(4),
             .dashboard-grid .card:nth-child(6),
@@ -139,7 +136,6 @@
         .txt-cyan { color: var(--cyan) !important; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
         .txt-amber { color: var(--amber) !important; text-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
 
-        /* --- Apple Watch Ring Style --- */
         .ring-container {
             position: relative;
             width: 120px;
@@ -164,7 +160,7 @@
             fill: none;
             stroke: var(--green);
             stroke-width: 10;
-            stroke-dasharray: 314; /* 2 * pi * 50 */
+            stroke-dasharray: 314; 
             stroke-dashoffset: 314;
             transition: stroke-dashoffset 0.8s ease-out, stroke 0.5s;
             stroke-linecap: round;
@@ -186,7 +182,6 @@
             color: #94a3b8;
             font-weight: 400;
         }
-        /* ----------------------------- */
 
         .control-panel { 
             background: #141a29; padding: 30px; border-radius: 24px; margin-top: 40px; 
@@ -195,13 +190,11 @@
         }
         .control-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         
-        /* แก้ไข Grid ด้านล่างให้สมดุลกับด้านบน */
         @media (min-width: 768px) { 
             .control-grid { 
-                /* 2fr (กว้าง 2 ส่วน) 1fr (กว้าง 1 ส่วน) 1fr (กว้าง 1 ส่วน) = รวม 4 ส่วน พอดีกับด้านบน */
                 grid-template-columns: 2fr 1fr 1fr; 
                 gap: 25px; 
-                align-items: stretch; /* ให้ความสูงเท่ากัน */
+                align-items: stretch; 
             } 
         }
 
@@ -216,6 +209,14 @@
         }
         input[type="number"]:focus { border-color: var(--indigo); background: rgba(99, 102, 241, 0.1); }
         
+        /* CSS เพิ่มเติมสำหรับกล่องกรอกตำแหน่ง */
+        input[type="text"].text-input { 
+            background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 8px;
+            color: white; width: 100%; font-size: 16px; font-family: 'Kanit'; text-align: center; 
+            outline: none; padding: 8px 0; margin: 5px 0; transition: 0.3s;
+        }
+        input[type="text"].text-input:focus { border-color: var(--cyan); background: rgba(0, 242, 255, 0.1); }
+
         .btn { border: none; padding: 16px; border-radius: 12px; font-family: 'Kanit'; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px; width: 100%; height: 100%; }
         .btn-update { background: linear-gradient(90deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); margin-top: auto;}
         .btn-sheet { background: rgba(0, 255, 136, 0.05); color: var(--green); border: 1px solid rgba(0, 255, 136, 0.3); text-align: center; flex-direction: column; gap: 10px;}
@@ -228,7 +229,13 @@
 <div class="container">
     <div class="header">
         <h1>Transformer Load Current Monitoring</h1>
-        <div class="developer-tag">Dev: Pongpichan Suanon | <span id="val-sync">Connecting...</span></div>
+        <div class="developer-tag">
+            Dev: Pongpichan Suanon | <span id="val-sync">Connecting...</span><br>
+            <span style="display: inline-block; margin-top: 8px; color: #94a3b8; font-size: 15px;">
+                📍 สถานที่ติดตั้ง: <span id="val-locname" style="color: white;">ยังไม่ระบุตำแหน่ง</span>
+                <a id="btn-map" href="#" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px; display: none; font-weight: 500;">🗺️ ดูแผนที่</a>
+            </span>
+        </div>
     </div>
 
     <div class="status-box" id="status-card">
@@ -250,7 +257,7 @@
 
         <div class="card"><h3>Ground (IG)</h3><div class="value txt-amber"><span id="val-ig">0.00</span><span class="unit">mA</span></div></div>
 
-                <div class="card">
+        <div class="card">
             <h3>% Rated Trans. Charge</h3>
             <div class="ring-container">
                 <svg class="ring-svg">
@@ -290,8 +297,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 
     <div class="control-panel">
@@ -299,7 +304,15 @@
             <div class="input-card">
                 <span style="font-size: 13px; color: var(--indigo); font-weight: 600; letter-spacing: 1px;">CONFIG CAPACITY (kVA)</span>
                 <input type="number" id="input-kva" value="160">
-                <button class="btn btn-update" onclick="updateKVA()">💾 UPDATE SETTINGS</button>
+                
+                <span style="font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 1px; margin-top: 15px;">DEVICE LOCATION</span>
+                <input type="text" id="input-locname" placeholder="ชื่อสถานที่ (เช่น หม้อแปลงหน้าตึก)" class="text-input">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="input-lat" placeholder="Latitude (เช่น 16.4419)" class="text-input">
+                    <input type="text" id="input-lng" placeholder="Longitude (เช่น 102.8359)" class="text-input">
+                </div>
+
+                <button class="btn btn-update" onclick="updateSettings()" style="margin-top: 15px;">💾 UPDATE SETTINGS</button>
             </div>
             
             <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-kU0fi9Xk4kzmloANQ_5TATfa4Fz0mr0LtuFMPhwpdPDCB055oDjlq1re01VyTQ4RLG1CdyjbjGuB/pubhtml?widget=true&amp%3Bheaders=false&fbclid=IwY2xjawQCX2dleHRuA2FlbQIxMABicmlkETJtUjc1R080a1JvQW5FenRnc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHnIT_vhoA5HL-MDoR6IsZ_6FywDCN9pp3dBKwFokB1CYvdzTQ_bC7usrQVHb_aem_AF3oRjAK26mo8X_P8VwrEQ" target="_blank" class="btn btn-sheet">
@@ -334,6 +347,23 @@
         }
     });
 
+    // ดึงค่าการตั้งค่า kVA และสถานที่มาแสดงผล
+    db.ref('settings').on('value', (snap) => {
+        const s = snap.val();
+        if(s) {
+            if(s.location_name) document.getElementById('val-locname').innerText = s.location_name;
+            if(s.latitude && s.longitude) {
+                const mapBtn = document.getElementById('btn-map');
+                mapBtn.style.display = "inline-block";
+                mapBtn.href = `https://www.google.com/maps?q=$${s.latitude},${s.longitude}`;
+            }
+            if (document.activeElement.id !== "input-kva") document.getElementById('input-kva').value = s.kva || 160;
+            if (document.activeElement.id !== "input-locname") document.getElementById('input-locname').value = s.location_name || "";
+            if (document.activeElement.id !== "input-lat") document.getElementById('input-lat').value = s.latitude || "";
+            if (document.activeElement.id !== "input-lng") document.getElementById('input-lng').value = s.longitude || "";
+        }
+    });
+
     function fetchData() {
         if(!isConnected) return;
         db.ref('monitor').once('value').then((snap) => {
@@ -343,12 +373,11 @@
         }).catch((error) => console.error(error));
     }
 
-    // ฟังก์ชันอัปเดตวงกลม
     function setRing(elementId, percent, color) {
         const circle = document.getElementById(elementId);
         if(!circle) return;
         const radius = 50;
-        const circumference = 2 * Math.PI * radius; // ~314
+        const circumference = 2 * Math.PI * radius;
         const p = Math.min(Math.max(percent, 0), 100);
         const offset = circumference - (p / 100 * circumference);
         
@@ -369,32 +398,25 @@
         document.getElementById('val-sc').innerText = (d.sc || 0).toFixed(2);
         document.getElementById('val-stotal').innerText = (d.stotal || 0).toFixed(2);
         
-        // --- Update Unbalance Ring (New) ---
         const unbal = d.unbalance || 0;
         document.getElementById('val-unbalance').innerText = unbal.toFixed(2);
-        let unbalColor = "#00ff88"; // เขียว (ปกติ)
-        if (unbal > 25) unbalColor = "#ff4d4d"; // แดง (อันตราย)
-        else if (unbal > 10) unbalColor = "#ffcc00"; // เหลือง (เตือน)
+        let unbalColor = "#00ff88"; 
+        if (unbal > 25) unbalColor = "#ff4d4d"; 
+        else if (unbal > 10) unbalColor = "#ffcc00"; 
         setRing('ring-unbal', unbal, unbalColor);
 
-        if (document.activeElement.id !== "input-kva") {
-             document.getElementById('input-kva').value = (d.kva || 160);
-        }
-        
-        // --- Update Battery Ring ---
         const batPct = Math.round(d.bat_percent || 0);
         document.getElementById('val-batpct').innerText = batPct;
-        let batColor = "#00ff88"; // Green
-        if (batPct < 25) batColor = "#ff4d4d"; // Red
-        else if (batPct < 60) batColor = "#ffcc00"; // Amber
+        let batColor = "#00ff88"; 
+        if (batPct < 25) batColor = "#ff4d4d"; 
+        else if (batPct < 60) batColor = "#ffcc00"; 
         setRing('ring-bat', batPct, batColor);
 
-        // --- Update Load Ring ---
         const loadPct = d.load_percent || 0;
         document.getElementById('val-loadpct').innerText = loadPct.toFixed(1);
-        let loadColor = "#00ff88"; // Green
-        if (loadPct > 75 && loadPct <= 90) loadColor = "#ffcc00"; // Amber
-        else if (loadPct > 90) loadColor = "#ff4d4d"; // Red
+        let loadColor = "#00ff88"; 
+        if (loadPct > 75 && loadPct <= 90) loadColor = "#ffcc00"; 
+        else if (loadPct > 90) loadColor = "#ff4d4d"; 
         setRing('ring-load', loadPct, loadColor);
 
         const statusText = d.status || "Normal";
@@ -407,10 +429,25 @@
     setInterval(fetchData, 1000); 
     fetchData();
 
-    function updateKVA() {
-        const val = parseFloat(document.getElementById('input-kva').value);
-        if(confirm("Confirm update to " + val + " kVA?")) { db.ref('settings').update({ kva: val }); }
+    // ฟังก์ชันอัปเดตข้อมูลทั้งหมดลง Firebase
+    function updateSettings() {
+        const valKVA = parseFloat(document.getElementById('input-kva').value);
+        const locName = document.getElementById('input-locname').value;
+        const lat = document.getElementById('input-lat').value;
+        const lng = document.getElementById('input-lng').value;
+
+        if(confirm("ยืนยันการอัปเดตตั้งค่า kVA และสถานที่?")) { 
+            db.ref('settings').update({ 
+                kva: valKVA,
+                location_name: locName,
+                latitude: lat,
+                longitude: lng
+            }).then(() => {
+                alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
+            }); 
+        }
     }
+
     function resetDevice() {
         if(confirm("🚨 Execute Hardware Reset?")) { db.ref('settings').update({ reset: 1 }); }
     }
